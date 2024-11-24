@@ -47,10 +47,12 @@ if (isset($array_ruta[0]) && $array_ruta[0] == "ver" && is_numeric($array_ruta[1
     //Llamo al método ver pasándole la clave que me están pidiendo
     $controller->editar($array_ruta[1]);
 
-} else if (isset($array_ruta[0]) && $array_ruta[0] == "sancionar" && is_string($array_ruta[1])) { 
+} else if (isset($array_ruta[0]) && $array_ruta[0] == "sancionar" && is_string($array_ruta[1])) {
 
-   $controller->sancionar($array_ruta[1]); 
+    $controller->sancionar(trim($array_ruta[1]));
 
+} else if (isset($array_ruta[0]) && $array_ruta[0] == "pintar" && isset($array_ruta[1]) && is_string($array_ruta[1]) && isset($array_ruta[2]) && is_string($array_ruta[2])) {
+    $controller->pintar($array_ruta[1], $array_ruta[2]);
 } else {
     $controller->index();
 }

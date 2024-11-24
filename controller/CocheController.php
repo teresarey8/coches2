@@ -114,48 +114,68 @@ class CocheController
             echo "Datos incompletos.";
         }
     }
+
     public function sancionar($marca)
     {
-        // Validar que la marca sea un valor no vacío y válido
-        //var_dump($marca);
-        //die();
-        //echo "<pre>";
-        //var_dump($marca, $this->miscoches);
-        //die();
-        //debugueando 
-        /*if (!empty($marca)) {
-            if (isset($this->miscoches[$marca])) {
-            echo "Marca encontrada: " . $marca;
-        } else {
-        echo "La marca no está en miscoches.";
-        }
-        } else {
-        echo "La marca está vacía.";
-        }
-        die();
+        echo "Llamando a la función sancionar() con marca: $marca<br>";
 
-        */
-        // Validar entrada
-        echo "Llamando a la función sancionar() con marca: $marca<br>"; // Mensaje de depuración
-        $marca = filter_var($marca, FILTER_SANITIZE_STRING);
-        if (isset($this->miscoches[$marca])) {
+        // Validar y limpiar entrada
+        $marca = strtolower(trim(filter_var($marca, FILTER_SANITIZE_STRING)));
+
+        // Verificar si la marca existe en miscoches
+        $marca_encontrada = false;
+        //Ahora estamos recorriendo cada valor de $this->miscoches, 
+        //que es un objeto Coche, y usamos el método getMarca() para obtener la marca del coche.
+        foreach ($this->miscoches as $id => $coche) {
+            // Acceder al getter de la marca si la propiedad es privada
+            if (method_exists($coche, 'getMarca') && strtolower($coche->getMarca()) === $marca) {
+                $marca_encontrada = true;
+                break;
+            }
+        }
+
+        if (!$marca_encontrada) {
             echo "El coche no existe o ha sido eliminado previamente.";
             $this->index();
             return;
-        } else {
-
-            $resultado = Coche::sancionarPM($marca);
-
-            if ($resultado) {
-                echo "Se han sancionado los coches.";
-            } else {
-                echo "El coche no se pudo sancionar. Puede que ya no exista en la base de datos.";
-            }
-
-            header("refresh:1; url=/proyectos/coches2/index.php");
-            exit;
-
         }
+
+        // Llamar al modelo para sancionar la marca
+        $resultado = Coche::sancionarPM($marca);
+
+        if ($resultado) {
+            echo "Se han sancionado los coches de la marca '$marca'.";
+        } else {
+            echo "El coche no se pudo sancionar. Puede que ya no exista en la base de datos.";
+        }
+
+        // Redirigir después de 1 segundo
+        header("refresh:1; url=/proyectos/coches2/index.php");
+        exit;
+    }
+
+    public function pintar($nombre, $color)
+    {
+        // Mensaje de depuración para verificar que hemos recibido los parámetros correctamente
+        echo "Llamando a la función pintar() con nombre: $nombre y color: $color<br>";
+
+        // Validar y limpiar los parámetros
+        $nombre = trim(strtolower(filter_var($nombre, FILTER_SANITIZE_STRING)));
+        $color = trim(strtolower(filter_var($color, FILTER_SANITIZE_STRING)));
+
+        // Realizar la actualización del color en la base de datos
+        $resultado = Coche::ActualizarColor($nombre, $color);
+
+        // Mostrar el resultado
+        if ($resultado) {
+            echo "El coche de $nombre ha sido pintado de color $color.<br>";
+        } else {
+            echo "No se pudo pintar el coche. Puede que no exista o que haya un problema con la base de datos.<br>";
+        }
+
+        // Redirigir después de 1 segundo
+        header("refresh:1; url=/proyectos/coches2/index.php");
+        exit;
     }
 
 }

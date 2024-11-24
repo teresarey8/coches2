@@ -167,33 +167,53 @@ class Coche
         }
     }
     public static function sancionarPM($marca)
-{//siempre try catch para los mensajes de error
-    try {
-        // Conexión a la base de datos
-        $conexion = new PDO("mysql:host=localhost;dbname=coches", "root", "");
-        $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    {
+        try {
+            // Conexión a la base de datos
+            $conexion = new PDO("mysql:host=localhost;dbname=coches", "root", "");
+            $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Consulta SQL con parámetros
-        $sql = 'DELETE FROM miscoches WHERE marca = :marca';
-        $stmt = $conexion->prepare($sql);
+            // Consulta SQL con parámetro para eliminar coches de la marca
+            $sql = 'DELETE FROM miscoches WHERE LOWER(TRIM(marca)) = :marca';
+            $stmt = $conexion->prepare($sql);
 
-        // Vincula el parámetro como una cadena no como int!
-        $stmt->bindParam(':marca', $marca, PDO::PARAM_STR);
+            // Vincular parámetro marca como string
+            $stmt->bindParam(':marca', $marca, PDO::PARAM_STR);
 
-        // Ejecuta la consulta
-        $stmt->execute();
+            // Ejecutar la consulta
+            $stmt->execute();
 
-        // Verifica si se afectaron filas
-        if ($stmt->rowCount() > 0) {
-            return true; // Operación exitosa
-        } else {
-            return false; // No se encontró la marca
+            // Comprobar filas afectadas
+            return $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            // Loguear error
+            error_log("Error en sancionarPM: " . $e->getMessage());
+            return false;
         }
-    } catch (PDOException $e) {
-        // Manejo de errores
-        error_log("Error en sancionarPM: " . $e->getMessage());
-        return false;
     }
-}
+    public static function ActualizarColor($propietario, $color){
+        try {
+            // Conexión a la base de datos
+            $conexion = new PDO("mysql:host=localhost;dbname=coches", "root", "");
+            $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $sql = 'UPDATE miscoches SET color = :color WHERE propietario = :propietario';
+            $stmt = $conexion->prepare($sql);
+
+            // Vincular parámetro marca como string
+            $stmt->bindParam(':propietario', $propietario, PDO::PARAM_STR);
+            $stmt->bindParam(':color', $color, PDO::PARAM_STR);
+
+            // Ejecutar la consulta
+            $stmt->execute();
+
+            // Comprobar filas afectadas
+            return $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            // Loguear error
+            error_log("Error en sancionarPM: " . $e->getMessage());
+            return false;
+        }
+    }
 
 }
