@@ -114,16 +114,48 @@ class CocheController
             echo "Datos incompletos.";
         }
     }
-  /*  public function sancionar($marca){
-        // Verifica si el coche existe en el arreglo miscoches
-        if (isset($this->miscoches[$marca])) {
-            Coche::sancionar($marca);  // Llama al método borrar del modelo
-            echo "Se han sancionado los coches";
-            header("refresh:1; url=/proyectos/coches2/index.php");
+    public function sancionar($marca)
+    {
+        // Validar que la marca sea un valor no vacío y válido
+        //var_dump($marca);
+        //die();
+        //echo "<pre>";
+        //var_dump($marca, $this->miscoches);
+        //die();
+        //debugueando 
+        /*if (!empty($marca)) {
+            if (isset($this->miscoches[$marca])) {
+            echo "Marca encontrada: " . $marca;
         } else {
-            // Si no existe, muestra un mensaje o llama al método por defecto
+        echo "La marca no está en miscoches.";
+        }
+        } else {
+        echo "La marca está vacía.";
+        }
+        die();
+
+        */
+        // Validar entrada
+        echo "Llamando a la función sancionar() con marca: $marca<br>"; // Mensaje de depuración
+        $marca = filter_var($marca, FILTER_SANITIZE_STRING);
+        if (isset($this->miscoches[$marca])) {
             echo "El coche no existe o ha sido eliminado previamente.";
             $this->index();
+            return;
+        } else {
+
+            $resultado = Coche::sancionarPM($marca);
+
+            if ($resultado) {
+                echo "Se han sancionado los coches.";
+            } else {
+                echo "El coche no se pudo sancionar. Puede que ya no exista en la base de datos.";
+            }
+
+            header("refresh:1; url=/proyectos/coches2/index.php");
+            exit;
+
         }
-    }*/
+    }
+
 }

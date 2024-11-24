@@ -166,19 +166,34 @@ class Coche
             $conexion = null;
         }
     }
-/*    public static function sancionar($marca)
-    {
+    public static function sancionarPM($marca)
+{//siempre try catch para los mensajes de error
+    try {
         // Conexión a la base de datos
         $conexion = new PDO("mysql:host=localhost;dbname=coches", "root", "");
+        $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Consulta SQL con parámetros
         $sql = 'DELETE FROM miscoches WHERE marca = :marca';
         $stmt = $conexion->prepare($sql);
 
-        // Vincula el parámetro
-        $stmt->bindParam(':marca', $marca, PDO::PARAM_INT);
+        // Vincula el parámetro como una cadena no como int!
+        $stmt->bindParam(':marca', $marca, PDO::PARAM_STR);
 
         // Ejecuta la consulta
         $stmt->execute();
-    }*/
+
+        // Verifica si se afectaron filas
+        if ($stmt->rowCount() > 0) {
+            return true; // Operación exitosa
+        } else {
+            return false; // No se encontró la marca
+        }
+    } catch (PDOException $e) {
+        // Manejo de errores
+        error_log("Error en sancionarPM: " . $e->getMessage());
+        return false;
+    }
+}
+
 }

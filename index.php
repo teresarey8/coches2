@@ -33,7 +33,7 @@ if (isset($array_ruta[0]) && $array_ruta[0] == "ver" && is_numeric($array_ruta[1
     $controller->borrar($array_ruta[1]); // Llama al método borrar del controlador
 
 } else if (isset($array_ruta[0]) && $array_ruta[0] == 'guardarCoche' && $_SERVER['REQUEST_METHOD'] == 'POST') {
-    $controller->guardarCocheE();
+    $controller->guardarCoche();
 
 } else if ($array_ruta[0] == "alta") {
 
@@ -47,12 +47,11 @@ if (isset($array_ruta[0]) && $array_ruta[0] == "ver" && is_numeric($array_ruta[1
     //Llamo al método ver pasándole la clave que me están pidiendo
     $controller->editar($array_ruta[1]);
 
-} /*else if (isset($array_ruta[0]) && $array_ruta[0] == "sancionar" && !is_numeric($array_ruta[1])) { 
+} else if (isset($array_ruta[0]) && $array_ruta[0] == "sancionar" && is_string($array_ruta[1])) { 
 
-   $controller->sancionar($array_ruta[1]); // Llama al método borrar del controlador
+   $controller->sancionar($array_ruta[1]); 
 
-
-}*/ else {
+} else {
     $controller->index();
 }
 
